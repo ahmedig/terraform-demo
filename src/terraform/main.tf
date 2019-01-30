@@ -45,7 +45,7 @@ resource "azurerm_virtual_machine" "vm" {
   location                      = "${var.location}"
   resource_group_name           = "${var.resource_group_name}"
   network_interface_ids         = ["${element(azurerm_network_interface.nic.*.id, count.index)}"]
-  vm_size                       = "${var.vm_size}"
+  vm_size                       = "${lookup(var.vm_properties, "vm_size")}"
   availability_set_id           = "${element(azurerm_availability_set.availabilityset.*.id, count.index)}"
   delete_os_disk_on_termination = "true"
 
@@ -60,8 +60,8 @@ resource "azurerm_virtual_machine" "vm" {
     name              = "OSDisk-${var.vm_prefix}${var.tag_environment}${format("%02d", count.index +1)}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "${var.managed_disk_type}"
-    disk_size_gb      = "${var.vm_disk_size}"
+    managed_disk_type = "${lookup(var.vm_properties, "managed_disk_type")}"
+    disk_size_gb      = "${lookup(var.vm_properties, "disk_size")}"
   }
 
   os_profile {

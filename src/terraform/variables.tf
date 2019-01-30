@@ -1,5 +1,14 @@
 terraform {
   backend "local" {}
+
+  # You can put your storage account details that will hold the state file.
+  # https://www.terraform.io/docs/backends/types/azurerm.html
+  # backend "azurerm" {
+  #   storage_account_name = "abcd1234"
+  #   container_name       = "tfstate"
+  #   key                  = "terraform.tfstate"
+  #   access_key           = "STORAGE ACCOUNT ACCESS KEY"
+  # }
 }
 
 provider "azurerm" {}
@@ -29,16 +38,14 @@ variable "vm_count" {
   default = 2
 }
 
-variable "managed_disk_type" {
-  default = "Standard_LRS"
-}
+variable "vm_properties" {
+  type = "map"
 
-variable "vm_size" {
-  default = "Standard_D4s_v3"
-}
-
-variable "vm_disk_size" {
-  default = "130"
+  default = {
+    disk_size         = "130"
+    vm_size           = "Standard_B1s"
+    managed_disk_type = "Standard_LRS"
+  }
 }
 
 variable "vm_username" {
