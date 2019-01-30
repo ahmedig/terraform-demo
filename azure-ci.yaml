@@ -1,0 +1,48 @@
+queue:
+  name: Hosted VS2017
+  demands: azureps
+
+pr: none
+
+variables:
+  ServiceConnectionAccount: 'WOW-DEVTEST'
+  TfStateResourceGroupName: 'wow-dev-terraform-tfstate'
+  TfStateStorageAccountName: 'terraformstatedevtest'
+  TfStateStorageAccountContainerName: 'dev-buildagents'
+
+steps:
+- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+  displayName: 'Replace tokens in Init-VirtualMachine.sh'
+  inputs:
+    rootDirectory: src\scripts
+    targetFiles: '**'
+    tokenPrefix: '{{'
+    tokenSuffix: '}}'
+
+- task: JamiePhillips.Terraform.TerraformTool.TerraformTool@0
+  displayName: 'Install Terraform'
+  inputs:
+    version: 0.11.10
+
+- task: PowerShell@2
+  displayName: 'Taint Resources'
+  inputs:
+    targetType: filePath
+    filePath: 'src\scripts\Taint-BuildAgents.ps1'
+    arguments: '-TFStateResourceGroupName "$(TfStateResourceGroupName)" -TFStateStorageAccountName "$(TfStateStorageAccountName)" -TFStateStorageAccessKey "$(TFStateStorageAccessKey)" -TFStateContainerName "$(TfStateStorageAccountContainerName)"'
+    workingDirectory: 'src\terraform'
+
+- task: petergroenewegen.PeterGroenewegen-Xpirit-Vsts-Release-Terraform.Xpirit-Vsts-Release-Terraform.Terraform@2
+  displayName: 'Terraform Apply'
+  inputs:
+    TemplatePath: src/terraform
+    Arguments: 'apply -auto-approve -var "vm_count=$(MachinesCount)" -parallelism=50'
+    InstallTerraform: true
+    UseAzureSub: true
+    ConnectedServiceNameARM: '$(ServiceConnectionAccount)'
+    ManageState: true
+    SpecifyStorageAccount: true
+    StorageAccountResourceGroup: '$(TfStateResourceGroupName)'
+    StorageAccountRM: $(TfStateStorageAccountName)
+    StorageContainerName: $(TfStateStorageAccountContainerName)
+    InitArguments: '-backend-config="key=terraform.tfstate" -reconfigure'
