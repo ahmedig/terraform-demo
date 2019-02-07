@@ -5,10 +5,10 @@ queue:
 pr: none
 
 variables:
-  ServiceConnectionAccount: 'WOW-DEVTEST'
-  TfStateResourceGroupName: 'wow-dev-terraform-tfstate'
-  TfStateStorageAccountName: 'terraformstatedevtest'
-  TfStateStorageAccountContainerName: 'dev-buildagents'
+  ServiceConnectionAccount: 'AzureServieConnectionName'
+  TfStateResourceGroupName: 'Resource Group Name'
+  TfStateStorageAccountName: 'storage account name'
+  TfStateStorageAccountContainerName: 'storage account container name'
 
 steps:
 - task: qetza.replacetokens.replacetokens-task.replacetokens@3
