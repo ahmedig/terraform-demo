@@ -11,14 +11,6 @@ variables:
   TfStateStorageAccountContainerName: 'storage account container name'
 
 steps:
-- task: qetza.replacetokens.replacetokens-task.replacetokens@3
-  displayName: 'Replace tokens in Init-VirtualMachine.sh'
-  inputs:
-    rootDirectory: src\scripts
-    targetFiles: '**'
-    tokenPrefix: '{{'
-    tokenSuffix: '}}'
-
 - task: JamiePhillips.Terraform.TerraformTool.TerraformTool@0
   displayName: 'Install Terraform'
   inputs:
