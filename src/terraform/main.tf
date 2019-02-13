@@ -17,7 +17,7 @@ resource "azurerm_resource_group" "resourceGroup" {
 # }
 
 resource "azurerm_availability_set" "availabilityset" {
-  name                         = "wow-${var.vm_prefix}${var.tag_environment}"
+  name                         = "${var.vm_prefix}${var.tag_environment}"
   platform_fault_domain_count  = 2
   platform_update_domain_count = 2
   location                     = "${var.location}"
